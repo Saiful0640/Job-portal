@@ -24,7 +24,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Company getCompanyById(Long id) {
 
-        return companyRepository.findById(id).orElseThrow(()-> new CompanyNotFoundException("No company found:"+ id));
+        return companyRepository.findById(id).orElseThrow(() -> new CompanyNotFoundException("No company found:" + id));
     }
 
     @Override
@@ -33,22 +33,18 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Boolean deleteByCompanyId(Long id) {
-        return companyRepository.findById(id).map(
-                company -> {
-
-                    companyRepository.delete(company);
-                    return true;
-                }).orElseThrow(()-> new CompanyNotFoundException("No company found:"+ id));
+    public void deleteByCompanyId(Long id) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new CompanyNotFoundException("No company found:" + id));
+        companyRepository.delete(company);
     }
 
     @Override
-    public Boolean updateByCompanyId(Long id, Company company) {
-        return companyRepository.findById(id).map(company1 -> {
-            company1.setName(company.getName());
-            company1.setDescription(company.getDescription());
-            companyRepository.save(company1);
-            return true;
-        }).orElseThrow(()-> new CompanyNotFoundException("No company found:"+ id));
+    public void updateByCompanyId(Long id, Company company) {
+        Company existingCompany = companyRepository.findById(id)
+                .orElseThrow(() -> new CompanyNotFoundException("No company found:" + id));
+        existingCompany.setName(company.getName());
+        existingCompany.setDescription(company.getDescription());
+        companyRepository.save(existingCompany);
     }
 }

@@ -19,46 +19,39 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     public List<Review> getAllReviews(Long companyId) {
-        List<Review> reviews= reviewRepository.findByCompanyId(companyId);
+        List<Review> reviews = reviewRepository.findByCompanyId(companyId);
         return reviews;
     }
 
     @Override
-    public Boolean addCompanyReview(Long companyId, Review reviewCompany) {
-        if (companyId != null && reviewCompany != null){
+    public void addCompanyReview(Long companyId, Review reviewCompany) {
+        if (companyId != null && reviewCompany != null) {
             reviewCompany.setCompanyId(companyId);
             reviewRepository.save(reviewCompany);
-            return true;
-        }else
-            return false;
+        }
     }
 
     @Override
     public Review getReview(Long reviewId) {
-        return reviewRepository.findById(reviewId).orElseThrow(null);
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review Not found with id " + reviewId));
     }
 
     @Override
-    public Boolean updateCompanyReview(Long reviewId, Review updatedReview) {
-        Review review = reviewRepository.findById(reviewId).orElse(null);
-        if (review != null){
-            review.setTitle(updatedReview.getTitle());
-            review.setDescription(updatedReview.getDescription());
-            review.setRating(updatedReview.getRating());
-            review.setCompanyId(updatedReview.getCompanyId());
-            reviewRepository.save(review);
-            return true;
-        }else
-            return false;
+    public void updateCompanyReview(Long reviewId, Review updatedReview) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review Not found with id " + reviewId));
+        review.setTitle(updatedReview.getTitle());
+        review.setDescription(updatedReview.getDescription());
+        review.setRating(updatedReview.getRating());
+        review.setCompanyId(updatedReview.getCompanyId());
+        reviewRepository.save(review);
     }
 
     @Override
-    public Boolean deleteCompanyReview(Long reviewId) {
-        return reviewRepository.findById(reviewId).map(
-                company -> {
-
-                    reviewRepository.delete(company);
-                    return true;
-                }).orElseThrow(()-> new ReviewNotFoundException("No company found:"+ reviewId));
+    public void deleteCompanyReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review Not found with id " + reviewId));
+        reviewRepository.delete(review);
     }
 }

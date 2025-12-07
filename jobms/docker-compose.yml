@@ -7,10 +7,10 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: jobmsdb
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://jobdb:5432/jobmsdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jobmsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
     ports:
@@ -50,6 +50,7 @@ services:
 volumes:
   postgres:
   pgadmin:
+
 
 networks:
   myNetwork:

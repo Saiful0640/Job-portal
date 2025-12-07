@@ -1,0 +1,3 @@
+CREATE DATABASE jobmsdb;
+CREATE DATABASE companymsdb;
+CREATE DATABASE reviewmsdb;

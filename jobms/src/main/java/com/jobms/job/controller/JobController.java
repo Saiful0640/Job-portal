@@ -1,7 +1,5 @@
 package com.jobms.job.controller;
 
-
-
 import com.jobms.job.model.Job;
 import com.jobms.job.service.JobService;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +11,11 @@ import java.util.List;
 @RequestMapping("/jobs")
 public class JobController {
 
+    private JobService jobService;
 
-private JobService jobService;
-
-public JobController(JobService jobService) {
-    this.jobService = jobService;
-}
+    public JobController(JobService jobService) {
+        this.jobService = jobService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Job>> findAllJob() {
@@ -48,4 +45,3 @@ public JobController(JobService jobService) {
         return ResponseEntity.ok("Job updated");
     }
 }
-

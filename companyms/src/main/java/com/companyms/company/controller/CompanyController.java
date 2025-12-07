@@ -12,6 +12,7 @@ import java.util.List;
 public class CompanyController {
 
     private CompanyService companyService;
+
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
@@ -22,6 +23,7 @@ public class CompanyController {
         companyService.createCompany(company);
         return ResponseEntity.ok("Company Saved");
     }
+
     @GetMapping
     public ResponseEntity<List<Company>> getall() {
         return ResponseEntity.ok(companyService.getAllCompanies());
