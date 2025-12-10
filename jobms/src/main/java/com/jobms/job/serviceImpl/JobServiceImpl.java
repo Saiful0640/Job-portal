@@ -4,14 +4,19 @@ import com.jobms.job.exceptionHandler.JobNotFoundException;
 import com.jobms.job.model.Job;
 import com.jobms.job.repository.JobRepository;
 import com.jobms.job.service.JobService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
 @Service
 public class JobServiceImpl implements JobService {
 
-    JobRepository jobRepository;
+   private JobRepository jobRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     public JobServiceImpl(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
