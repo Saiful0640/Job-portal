@@ -1,5 +1,6 @@
 package com.jobms.job.controller;
 
+import com.jobms.job.dto.JobDto;
 import com.jobms.job.model.Job;
 import com.jobms.job.service.JobService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> findAllJob() {
-        return ResponseEntity.ok(jobService.findAllJob());
+    public ResponseEntity<List<JobDto>> findAllJob() {
+        return ResponseEntity.ok(jobService.findAllJobs());
     }
 
     @PostMapping

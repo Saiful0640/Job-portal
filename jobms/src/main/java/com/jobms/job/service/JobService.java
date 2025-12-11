@@ -1,12 +1,13 @@
 package com.jobms.job.service;
 
+import com.jobms.job.dto.JobDto;
 import com.jobms.job.model.Job;
 
 import java.util.List;
 
 public interface JobService {
 
-    List<Job> findAllJob();
+    public List<JobDto> findAllJobs();
 
     void saveJob(Job job);
 
