@@ -1,7 +1,6 @@
 package com.companyms.company.controller;
 
 import com.companyms.company.Iservice.CompanyService;
-import com.companyms.company.model.Company;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
