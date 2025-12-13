@@ -11,10 +11,7 @@ import com.jobms.job.model.Job;
 import com.jobms.job.repository.JobRepository;
 import com.jobms.job.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -23,10 +20,9 @@ import java.util.stream.Collectors;
 @Service
 public class JobServiceImpl implements JobService {
 
-   private JobRepository jobRepository;
-   private CompanyClients companyClients;
-   private ReviewClient reviewClient;
-
+    private JobRepository jobRepository;
+    private CompanyClients companyClients;
+    private ReviewClient reviewClient;
 
     @Autowired
     RestTemplate restTemplate;
@@ -37,41 +33,48 @@ public class JobServiceImpl implements JobService {
         this.reviewClient = reviewClient;
     }
 
-
     @Override
     public List<JobDto> findAllJobs() {
         List<Job> jobList = jobRepository.findAll();
+        List<Long> companyIds = jobList.stream().map(Job::getCompanyId).distinct().collect(Collectors.toList());
+        List<Company> companies = companyClients.getCompaniesByIds(companyIds);
+        java.util.Map<Long, Company> companyMap = companies.stream().collect(Collectors.toMap(Company::getId, c -> c));
 
-
-        return jobList.stream().map(this::convertToDto)
+        return jobList.stream().map(job -> convertToDto(job, companyMap.get(job.getCompanyId())))
                 .collect(Collectors.toList());
     }
 
-    private JobDto convertToDto(Job job){
+    private JobDto convertToDto(Job job, Company company) {
+        List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
+        JobDto jobDTO = JobMapper
+                .mapToJobWithCompanyDto(job, company, reviews);
+        return jobDTO;
+    }
 
-
+    private JobDto convertToDto(Job job) {
         Company company = companyClients.getCompany(job.getCompanyId());
         List<Review> reviews = reviewClient.getReviews(job.getCompanyId());
 
         JobDto jobDTO = JobMapper
-                .mapToJobWithCompanyDto(job,company,reviews);
-
+                .mapToJobWithCompanyDto(job, company, reviews);
 
         return jobDTO;
     }
 
     @Override
-    public void saveJob(Job job) {
+    public void createJob(JobDto jobDto) {
+        // Validate company exists
+        companyClients.getCompany(jobDto.getCompanyId());
 
+        Job job = JobMapper.mapToJob(jobDto);
         jobRepository.save(job);
     }
 
     @Override
-    public Job findJobById(Long id) {
+    public JobDto findJobById(Long id) {
         Job job = jobRepository.findById(id).orElseThrow(() -> new JobNotFoundException("Job not found"));
-        return job;
+        return convertToDto(job);
     }
-
 
     @Override
     public void deleteJobById(Long id) {
@@ -81,9 +84,12 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public void updateJob(Long id, Job updatedJob) {
+    public void updateJob(Long id, JobDto updatedJob) {
         Job existingJob = jobRepository.findById(id)
                 .orElseThrow(() -> new JobNotFoundException("Job not found with id: " + id));
+
+        // Validate company exists
+        companyClients.getCompany(updatedJob.getCompanyId());
 
         existingJob.setTitle(updatedJob.getTitle());
         existingJob.setDescription(updatedJob.getDescription());

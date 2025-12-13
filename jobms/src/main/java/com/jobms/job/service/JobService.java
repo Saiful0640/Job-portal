@@ -9,11 +9,11 @@ public interface JobService {
 
     public List<JobDto> findAllJobs();
 
-    void saveJob(Job job);
+    void createJob(JobDto jobDto);
 
-    Job findJobById(Long id);
+    JobDto findJobById(Long id);
 
     void deleteJobById(Long id);
 
-    void updateJob(Long id, Job updateJob);
+    void updateJob(Long id, JobDto jobDto);
 }

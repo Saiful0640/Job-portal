@@ -30,6 +30,16 @@ services:
       - myNetwork
     restart: unless-stopped
 
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - myNetwork
+    restart: always
+
   job-service:
     image: donsaifulban1/jobms
     build:
@@ -42,6 +52,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jobmsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
+      RABBITMQ_HOST: rabbitmq
     ports:
       - "8080:8080"
     networks:
@@ -56,10 +67,12 @@ services:
     container_name: companyms
     depends_on:
       - postgres
+      - rabbitmq
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/companymsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
+      RABBITMQ_HOST: rabbitmq
     ports:
       - "8081:8081"
     networks:
@@ -78,6 +91,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/reviewmsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
+      RABBITMQ_HOST: rabbitmq
     ports:
       - "8083:8083"
     networks:

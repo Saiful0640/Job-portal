@@ -10,8 +10,9 @@ public class JobDto {
     private String title;
     private String description;
     private String location;
-    private String maxSalaray;
-    private String minSalaray;
+    private String maxSalary;
+    private String minSalary;
+    private Long companyId;
     private Company company;
     private List<Review> reviews;
 
@@ -47,20 +48,28 @@ public class JobDto {
         this.location = location;
     }
 
-    public String getMaxSalaray() {
-        return maxSalaray;
+    public String getMaxSalary() {
+        return maxSalary;
     }
 
-    public void setMaxSalaray(String maxSalaray) {
-        this.maxSalaray = maxSalaray;
+    public void setMaxSalary(String maxSalary) {
+        this.maxSalary = maxSalary;
     }
 
-    public String getMinSalaray() {
-        return minSalaray;
+    public String getMinSalary() {
+        return minSalary;
     }
 
-    public void setMinSalaray(String minSalaray) {
-        this.minSalaray = minSalaray;
+    public void setMinSalary(String minSalary) {
+        this.minSalary = minSalary;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public Company getCompany() {

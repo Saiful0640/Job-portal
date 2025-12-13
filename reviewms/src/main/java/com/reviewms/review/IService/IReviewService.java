@@ -1,17 +1,18 @@
 package com.reviewms.review.IService;
 
+import com.reviewms.review.dto.ReviewDto;
 import com.reviewms.review.model.Review;
 
 import java.util.List;
 
 public interface IReviewService {
-    List<Review> getAllReviews(Long companyId);
+    List<ReviewDto> getAllReviews(Long companyId);
 
-    void addCompanyReview(Long companyId, Review reviewCompany);
+    void addCompanyReview(Long companyId, ReviewDto reviewDto);
 
-    Review getReview(Long reviewId);
+    ReviewDto getReview(Long reviewId);
 
-    void updateCompanyReview(Long reviewId, Review updatedReview);
+    void updateCompanyReview(Long reviewId, ReviewDto reviewDto);
 
     void deleteCompanyReview(Long reviewId);
 }

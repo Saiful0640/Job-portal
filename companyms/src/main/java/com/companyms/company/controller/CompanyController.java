@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import com.companyms.company.dto.CompanyDto;
+
 @RestController
 @RequestMapping("/company")
 public class CompanyController {
@@ -17,32 +19,37 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @PostMapping
-    public ResponseEntity<String> savecompany(@RequestBody Company company) {
+    @PostMapping("/batch")
+    public ResponseEntity<List<CompanyDto>> getCompaniesByIds(@RequestBody List<Long> ids) {
+        return ResponseEntity.ok(companyService.getCompaniesByIds(ids));
+    }
 
-        companyService.createCompany(company);
+    @PostMapping
+    public ResponseEntity<String> savecompany(@RequestBody CompanyDto companyDto) {
+
+        companyService.createCompany(companyDto);
         return ResponseEntity.ok("Company Saved");
     }
 
     @GetMapping
-    public ResponseEntity<List<Company>> getall() {
+    public ResponseEntity<List<CompanyDto>> getall() {
         return ResponseEntity.ok(companyService.getAllCompanies());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Company> getCompanysById(@PathVariable Long id) {
+    public ResponseEntity<CompanyDto> getCompanysById(@PathVariable Long id) {
         return ResponseEntity.ok(companyService.getCompanyById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompanyById(@PathVariable Long id) {
         companyService.deleteByCompanyId(id);
-        return ResponseEntity.ok("Job deleted");
+        return ResponseEntity.ok("Company deleted");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCompany(@PathVariable Long id, @RequestBody Company company) {
-        companyService.updateByCompanyId(id, company);
-        return ResponseEntity.ok("Job updated");
+    public ResponseEntity<String> updateCompany(@PathVariable Long id, @RequestBody CompanyDto companyDto) {
+        companyService.updateByCompanyId(id, companyDto);
+        return ResponseEntity.ok("Company updated");
     }
 }

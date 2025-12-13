@@ -1,7 +1,6 @@
 package com.jobms.job.controller;
 
 import com.jobms.job.dto.JobDto;
-import com.jobms.job.model.Job;
 import com.jobms.job.service.JobService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,26 +22,30 @@ public class JobController {
         return ResponseEntity.ok(jobService.findAllJobs());
     }
 
+    private static final String JOB_SAVED = "Job Saved";
+    private static final String JOB_DELETED = "Job deleted";
+    private static final String JOB_UPDATED = "Job updated";
+
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Job job) {
-        jobService.saveJob(job);
-        return ResponseEntity.ok("Job Saved");
+    public ResponseEntity<String> create(@RequestBody JobDto jobDto) {
+        jobService.createJob(jobDto);
+        return ResponseEntity.ok(JOB_SAVED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Job> getJobsById(@PathVariable Long id) {
+    public ResponseEntity<JobDto> getJobsById(@PathVariable Long id) {
         return ResponseEntity.ok(jobService.findJobById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteJobById(@PathVariable Long id) {
         jobService.deleteJobById(id);
-        return ResponseEntity.ok("Job deleted");
+        return ResponseEntity.ok(JOB_DELETED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Job job) {
-        jobService.updateJob(id, job);
-        return ResponseEntity.ok("Job updated");
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody JobDto jobDto) {
+        jobService.updateJob(id, jobDto);
+        return ResponseEntity.ok(JOB_UPDATED);
     }
 }
