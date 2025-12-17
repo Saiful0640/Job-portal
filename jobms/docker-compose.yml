@@ -48,11 +48,17 @@ services:
     container_name: jobms
     depends_on:
       - postgres
+      - config-server
+      - service-registry
+      - zipkin
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jobmsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
       RABBITMQ_HOST: rabbitmq
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
     ports:
       - "8080:8080"
     networks:
@@ -68,11 +74,17 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - config-server
+      - service-registry
+      - zipkin
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/companymsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
       RABBITMQ_HOST: rabbitmq
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
     ports:
       - "8081:8081"
     networks:
@@ -87,13 +99,76 @@ services:
     container_name: reviewms
     depends_on:
       - postgres
+      - config-server
+      - service-registry
+      - zipkin
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/reviewmsdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: root
       RABBITMQ_HOST: rabbitmq
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
     ports:
       - "8083:8083"
+    networks:
+      - myNetwork
+    restart: unless-stopped
+
+  config-server:
+    image: donsaifulban1/config-server
+    build:
+      context: ../config-server
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - myNetwork
+    restart: unless-stopped
+
+  service-registry:
+    image: donsaifulban1/service-registry
+    build:
+      context: ../service-registry
+      dockerfile: Dockerfile
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    environment:
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888/"
+    networks:
+      - myNetwork
+    restart: unless-stopped
+
+  gateway:
+    image: donsaifulban1/gateway
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    ports:
+      - "8084:8084"
+    depends_on:
+      - config-server
+      - service-registry
+      - zipkin
+    environment:
+      SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888/"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+    networks:
+      - myNetwork
+    restart: unless-stopped
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
     networks:
       - myNetwork
     restart: unless-stopped
