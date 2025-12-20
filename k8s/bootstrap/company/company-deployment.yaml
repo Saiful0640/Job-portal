@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: companyms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: companyms
+  template:
+    metadata:
+      labels:
+        app: companyms
+    spec:
+      containers:
+        - name: companyms
+          image: donsaifulban1/companyms
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/companyms
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+            - name: RABBITMQ_HOST
+              value: rabbitmq-service
+            - name: SPRING_CONFIG_IMPORT
+              value: "optional:configserver:http://config-server:8888/"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://service-registry:8761/eureka/
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://zipkin-service:9411/api/v2/spans
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+              value: org.hibernate.dialect.PostgreSQLDialect

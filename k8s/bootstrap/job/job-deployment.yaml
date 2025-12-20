@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobms
+  template:
+    metadata:
+      labels:
+        app: jobms
+    spec:
+      containers:
+        - name: jobms
+          image: donsaifulban1/jobms
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/jobms
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+            - name: RABBITMQ_HOST
+              value: rabbitmq-service
+            - name: SPRING_CONFIG_IMPORT
+              value: "optional:configserver:http://config-server:8888/"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://service-registry:8761/eureka/
+            - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+              value: "true"
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://zipkin-service:9411/api/v2/spans
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
+              value: org.hibernate.dialect.PostgreSQLDialect

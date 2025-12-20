@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-registry
+  template:
+    metadata:
+      labels:
+        app: service-registry
+    spec:
+      containers:
+        - name: service-registry
+          image: donsaifulban1/service-registry
+          ports:
+            - containerPort: 8761
+          env:
+            - name: SPRING_CONFIG_IMPORT
+              value: "optional:configserver:http://config-server:8888/"

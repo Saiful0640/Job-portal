@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviewms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviewms
+  template:
+    metadata:
+      labels:
+        app: reviewms
+    spec:
+      containers:
+        - name: reviewms
+          image: donsaifulban1/reviewms
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/reviewmsdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: root
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_CONFIG_IMPORT
+              value: "optional:configserver:http://config-server:8888/"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://service-registry:8761/eureka/
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              value: http://zipkin:9411/api/v2/spans
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviewms
+spec:
+  selector:
+    app: reviewms
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
